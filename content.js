@@ -16,6 +16,9 @@ button.style.cursor = 'pointer';
 button.style.zIndex = '10000';
 button.innerText = 'Send to GPT';
 
+
+
+
 // Append the button to the body
 document.body.appendChild(button);
 
@@ -36,9 +39,7 @@ responseDiv.style.maxWidth = '300px';
 responseDiv.style.display = 'true'; // Initially hidden
 
 
-//<input id="btn" onclick="CopyToClipboard('text')" type="button" value="Copy" />
-//add copy button to responseDiv using CopyToClipboard function
-//copyButton = '<input id="btn" onclick="CopyToClipboard(\'text\')" type="button" value="Copy" />'
+
 
 
 // Append the response div to the body
@@ -55,6 +56,18 @@ copyButton.style.color = 'white';
 copyButton.style.borderRadius = '5px';
 copyButton.style.cursor = 'pointer';
 
+
+// Create a minimize button
+const minimizeButton = document.createElement('button');
+minimizeButton.innerText = 'Hide';
+minimizeButton.style.padding = '5px 10px';
+minimizeButton.style.border = 'none';
+minimizeButton.style.backgroundColor = '#28A745';
+minimizeButton.style.color = 'white';
+minimizeButton.style.borderRadius = '5px';
+minimizeButton.style.cursor = 'pointer';
+
+
 // const pasteButton = document.createElement('button');
 // pasteButton.innerText = 'Paste';
 // pasteButton.style.padding = '5px 10px';
@@ -70,6 +83,20 @@ buttonContainer.appendChild(copyButton);
 //buttonContainer.appendChild(pasteButton);
 responseDiv.appendChild(buttonContainer);
 
+
+// Minimize functionality
+minimizeButton.addEventListener('click', () => {
+    if (responseDiv.style.display === 'block') {
+        responseDiv.style.display = 'none';
+        button.innerText = 'Show Response';
+    } else {
+        responseDiv.style.display = 'block';
+        button.innerText = 'Send to GPT';
+    }
+});
+
+// Add minimize button to responseDiv
+responseDiv.appendChild(minimizeButton);
 
 function CopyToClipboard(element) {
 
@@ -183,27 +210,27 @@ const activateExtension = () => {
             };
     
             // Paste button functionality
-            pasteButton.onclick = () => {
-                const chatInput = document.querySelector(
-                    'div[contenteditable="true"][data-tab="10"]'
-                );
+            // pasteButton.onclick = () => {
+            //     const chatInput = document.querySelector(
+            //         'div[contenteditable="true"][data-tab="10"]'
+            //     );
     
-                if (!chatInput) {
-                    console.error('Chat input field not found');
-                    return;
-                }
+            //     if (!chatInput) {
+            //         console.error('Chat input field not found');
+            //         return;
+            //     }
     
-                chatInput.innerHTML = `
-                    <p class="selectable-text copyable-text x15bjb6t x1n2onr6" dir="ltr" style="text-indent: 0px; margin-top: 0px; margin-bottom: 0px;">
-                        <span class="selectable-text copyable-text false" data-lexical-text="true">${responseText}</span>
-                    </p>
-                `;
+            //     chatInput.innerHTML = `
+            //         <p class="selectable-text copyable-text x15bjb6t x1n2onr6" dir="ltr" style="text-indent: 0px; margin-top: 0px; margin-bottom: 0px;">
+            //             <span class="selectable-text copyable-text false" data-lexical-text="true">${responseText}</span>
+            //         </p>
+            //     `;
     
-                const inputEvent = new Event('input', { bubbles: true });
-                chatInput.dispatchEvent(inputEvent);
+            //     const inputEvent = new Event('input', { bubbles: true });
+            //     chatInput.dispatchEvent(inputEvent);
     
-                console.log('Response pasted into chat input');
-            };
+            //     console.log('Response pasted into chat input');
+            // };
     
             console.log('Response successfully processed.');
         } catch (error) {

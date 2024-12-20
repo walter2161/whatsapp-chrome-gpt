@@ -1,12 +1,21 @@
 // Enable or disable debugging
 const debug = true;
 
+
+const assistantBehavior = "You are an expert assistant focused on financial insights."; // Example from Dashboard
+
 // Debugging helper function
 const debugLog = (message, ...optionalParams) => {
   if (debug) {
     console.log(message, ...optionalParams);
   }
 };
+fetch(chrome.runtime.getURL('config.json'))
+    .then(response => response.json())
+    .then(config => {
+        const preferredLanguage = config.PREFERRED_LANGUAGE || "en"; 
+        const prompt = `Please respond in ${preferredLanguage}: ${message}`;
+    });
 
 // Load the config.json file
 fetch(chrome.runtime.getURL('config.json'))
@@ -32,10 +41,11 @@ fetch(chrome.runtime.getURL('config.json'))
               'Authorization': `Bearer ${apiKey}`
           },
           body: JSON.stringify({
-              //model: "gpt-4-turbo",
-              model: "gpt-3.5-turbo",
+              //model: "gpt-3.5-turbo",
+              model: "gpt-4-turbo",
+              temperature: 0.7,
               messages: [
-                { role: "system", content: "You are a helpful assistant. Please provide direct and clear answers to user questions." },
+                { role: "system", content: assistantBehavior },
                 { role: "user", content: message }
             ]
           })
