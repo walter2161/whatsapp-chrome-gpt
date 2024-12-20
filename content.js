@@ -19,50 +19,80 @@ button.innerText = 'Activate';
 // Append the button to the body
 document.body.appendChild(button);
 
+// Create a div to display ChatGPT responses
+const responseDiv = document.createElement('div');
+responseDiv.id = 'chatgpt-response';
+responseDiv.style.position = 'fixed';
+responseDiv.style.bottom = '110px';
+responseDiv.style.right = '20px';
+responseDiv.style.padding = '15px';
+responseDiv.style.backgroundColor = '#ffffff';
+responseDiv.style.color = '#000';
+responseDiv.style.border = '1px solid #ccc';
+responseDiv.style.borderRadius = '10px';
+responseDiv.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+responseDiv.style.zIndex = '10000';
+responseDiv.style.maxWidth = '300px';
+responseDiv.style.display = 'none'; // Initially hidden
+
+// Append the response div to the body
+document.body.appendChild(responseDiv);
+
 // Function to handle extension activation
 const activateExtension = () => {
     console.log('Extension activated');
 
-    // Wait for the chat container to load
-    const waitForChatContainer = () => {
-        return new Promise((resolve) => {
-            const checkExist = setInterval(() => {
-                const chatContainer = document.querySelector('div[data-testid="conversation-panel"]');
-                if (chatContainer) {
-                    clearInterval(checkExist);
-                    resolve(chatContainer);
-                }
-            }, 500); // Check every 500ms
-        });
+    // Function to get the last message in WhatsApp Web
+    const getLastMessage = () => {
+        try {
+            const messageElements = document.querySelectorAll(
+                'div.copyable-text > div._akbu > span._ao3e.selectable-text.copyable-text > span'
+            );
+            if (messageElements.length === 0) {
+                console.log('No messages found');
+                return null;
+            }
+
+            const lastMessage = messageElements[messageElements.length - 1];
+            console.log('Last message:', lastMessage.innerText);
+            return lastMessage.innerText;
+        } catch (error) {
+            console.error('Error retrieving last message:', error);
+            return null;
+        }
     };
 
-    // Monitor messages once the chat container is found
-    const monitorMessages = async () => {
-        const chatContainer = await waitForChatContainer();
-        console.log('Chat container found:', chatContainer);
+    // Send the last message to ChatGPT via background.js
+    const sendMessageToChatGPT = (message) => {
+        if (!message) {
+            console.error('No message to send to ChatGPT');
+            return;
+        }
+        console.log('Sending to ChatGPT:', message);
 
-        // Mutation observer to watch for new messages
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes) {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            const textElement = node.querySelector('.selectable-text span');
-                            if (textElement) {
-                                console.log('New message:', textElement.innerText);
-                            }
-                        }
-                    });
+        chrome.runtime.sendMessage(
+            { action: 'sendToChatGPT', message: message },
+            (response) => {
+                if (response && response.success) {
+                    console.log('ChatGPT Reply:', response.reply);
+                    showResponse(response.reply);
+                } else {
+                    console.error('Error from ChatGPT:', response.error);
+                    showResponse(`Error: ${response.error}`);
                 }
-            });
-        });
-
-        // Start observing the chat container
-        observer.observe(chatContainer, { childList: true, subtree: true });
-        console.log('Message monitoring started');
+            }
+        );
     };
 
-    monitorMessages();
+    // Function to display the response
+    const showResponse = (responseText) => {
+        responseDiv.innerText = responseText;
+        responseDiv.style.display = 'block';
+    };
+
+    // Get the last message and send it to ChatGPT
+    const lastMessage = getLastMessage();
+    sendMessageToChatGPT(lastMessage);
 };
 
 // Add click event listener to activate the extension
