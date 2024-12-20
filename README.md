@@ -5,9 +5,10 @@ This Chrome add-on combines ChatGPT with the web version of WhatsApp and allows 
 The extension allows for more efficient messaging by offering the user features such as message fetching, communication with Open AI and even copy-pasting.
 
 ## Key Features
-- **Integration with ChatGPT:** Send messages to OpenAI's GPT and receive intelligent responses.
-- **Copy and Paste:** Easily copy responses or paste them directly into the chat.
-- **Floating UI:** Access and interact with the extension through an intuitive floating button on WhatsApp Web.
+- **Integration with ChatGPT:** Send messages to the OpenAI’s GPT, and receive an intelligent response.
+- **Copy and Paste:** Easily copy the responses or paste them in the chat.
+- **Floating UI:** Use and control the extension with an easy to use floating button over WhatsApp Web.
+
 
 ## Prerequisites
 - A valid OpenAI API key (<a href='https://platform.openai.com/'>https://platform.openai.com</a>).
