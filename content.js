@@ -35,12 +35,6 @@ responseDiv.style.zIndex = '10000';
 responseDiv.style.maxWidth = '300px';
 responseDiv.style.display = 'true'; // Initially hidden
 
-
-//<input id="btn" onclick="CopyToClipboard('text')" type="button" value="Copy" />
-//add copy button to responseDiv using CopyToClipboard function
-//copyButton = '<input id="btn" onclick="CopyToClipboard(\'text\')" type="button" value="Copy" />'
-
-
 // Append the response div to the body
 document.body.appendChild(responseDiv);
 
@@ -55,49 +49,20 @@ copyButton.style.color = 'white';
 copyButton.style.borderRadius = '5px';
 copyButton.style.cursor = 'pointer';
 
-// const pasteButton = document.createElement('button');
-// pasteButton.innerText = 'Paste';
-// pasteButton.style.padding = '5px 10px';
-// pasteButton.style.border = 'none';
-// pasteButton.style.backgroundColor = '#28A745';
-// pasteButton.style.color = 'white';
-// pasteButton.style.borderRadius = '5px';
-// pasteButton.style.cursor = 'pointer';
+const pasteButton = document.createElement('button');
+pasteButton.innerText = 'Paste';
+pasteButton.style.padding = '5px 10px';
+pasteButton.style.border = 'none';
+pasteButton.style.backgroundColor = '#28A745';
+pasteButton.style.color = 'white';
+pasteButton.style.borderRadius = '5px';
+pasteButton.style.cursor = 'pointer';
 
 const buttonContainer = document.createElement('div');
 buttonContainer.style.marginTop = '10px';
 buttonContainer.appendChild(copyButton);
-//buttonContainer.appendChild(pasteButton);
+buttonContainer.appendChild(pasteButton);
 responseDiv.appendChild(buttonContainer);
-
-
-function CopyToClipboard(element) {
-
-    var doc = document
-    , text = doc.getElementById(element)
-    , range, selection;
-
-if (doc.body.createTextRange)
-{
-    range = doc.body.createTextRange();
-    range.moveToElementText(text);
-    range.select();
-} 
-
-else if (window.getSelection)
-{
-    selection = window.getSelection();        
-    range = doc.createRange();
-    range.selectNodeContents(text);
-    selection.removeAllRanges();
-    selection.addRange(range);
-}
-document.execCommand('copy');
-window.getSelection().removeAllRanges();
-document.getElementById("btn").value="Copied";
-}
-
- 
 
 // Function to handle extension activation
 const activateExtension = () => {
@@ -158,11 +123,11 @@ const activateExtension = () => {
     // Function to display the response in the chat input field, copy it, and show it in the response div
     const showResponse = (responseText) => {
         console.log('Inserting response into chat input, copying it, and displaying it:', responseText);
-    
+
         try {
             // Ensure the response div is visible
             responseDiv.style.display = 'block';
-    
+
             // Add a text container for the response if not present
             let responseTextContainer = document.getElementById('response-text');
             if (!responseTextContainer) {
@@ -172,7 +137,7 @@ const activateExtension = () => {
                 responseDiv.insertBefore(responseTextContainer, buttonContainer);
             }
             responseTextContainer.innerText = responseText;
-    
+
             // Copy button functionality
             copyButton.onclick = () => {
                 navigator.clipboard.writeText(responseText).then(() => {
@@ -181,36 +146,36 @@ const activateExtension = () => {
                     console.error('Failed to copy response to clipboard:', err);
                 });
             };
-    
+
             // Paste button functionality
             pasteButton.onclick = () => {
                 const chatInput = document.querySelector(
                     'div[contenteditable="true"][data-tab="10"]'
                 );
-    
+
                 if (!chatInput) {
                     console.error('Chat input field not found');
                     return;
                 }
-    
+
                 chatInput.innerHTML = `
                     <p class="selectable-text copyable-text x15bjb6t x1n2onr6" dir="ltr" style="text-indent: 0px; margin-top: 0px; margin-bottom: 0px;">
                         <span class="selectable-text copyable-text false" data-lexical-text="true">${responseText}</span>
                     </p>
                 `;
-    
+
                 const inputEvent = new Event('input', { bubbles: true });
                 chatInput.dispatchEvent(inputEvent);
-    
+
                 console.log('Response pasted into chat input');
             };
-    
+
             console.log('Response successfully processed.');
         } catch (error) {
             console.error('Error processing response:', error);
         }
     };
-    
+
     // Get the last message and send it to ChatGPT
     const lastMessage = getLastMessage();
     sendMessageToChatGPT(lastMessage);
