@@ -1,15 +1,19 @@
  {
   "manifest_version": 2,
   "name": "WhatsApp GPT Connector",
-  "version": "0.0.1",
+  "version": "0.0.10",
   "permissions": [
     "activeTab",
     "storage",
-    "https://web.whatsapp.com/*"
+    "https://web.whatsapp.com/*",
+    "https://*.whatsapp.net/*"
   ],
   "background": {
     "scripts": ["background.js"]
   },
+  "web_accessible_resources": [
+  "config.json"
+],
   "content_scripts": [
     {
       "matches": ["https://web.whatsapp.com/*"],
