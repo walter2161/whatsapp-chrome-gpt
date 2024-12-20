@@ -32,8 +32,8 @@ fetch(chrome.runtime.getURL('config.json'))
               'Authorization': `Bearer ${apiKey}`
           },
           body: JSON.stringify({
+              //model: "gpt-4-turbo",
               model: "gpt-3.5-turbo",
-              { 
               messages: [
                 { role: "system", content: "You are a helpful assistant. Please provide direct and clear answers to user questions." },
                 { role: "user", content: message }
