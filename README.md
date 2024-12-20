@@ -1,7 +1,8 @@
 # ChatGPT Chrome Extension for WhatsApp Web
 
 ## Introduction
-This Chrome extension integrates ChatGPT with WhatsApp Web, enabling users to generate AI-powered responses to messages. With features like message retrieval, interaction with OpenAI's API, and seamless copy-paste functionality, this extension enhances messaging efficiency.
+This Chrome add-on combines ChatGPT with the web version of WhatsApp and allows the user to create AI-generated replies to messages. 
+The extension allows for more efficient messaging by offering the user features such as message fetching, communication with Open AI and even copy-pasting.
 
 ## Key Features
 - **Integration with ChatGPT:** Send messages to OpenAI's GPT and receive intelligent responses.
@@ -9,14 +10,14 @@ This Chrome extension integrates ChatGPT with WhatsApp Web, enabling users to ge
 - **Floating UI:** Access and interact with the extension through an intuitive floating button on WhatsApp Web.
 
 ## Prerequisites
-- A valid OpenAI API key.
+- A valid OpenAI API key (<a href='https://platform.openai.com/'>https://platform.openai.com</a>).
 - Google Chrome browser.
-- Basic familiarity with loading unpacked Chrome extensions.
+- Basic knowledge with <a href='https://support.google.com/chrome_webstore/answer/2664769?hl=en'>install and manage chrome extensions</a>.
 
 ## Installation Instructions
 1. **Download or Clone the Repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/elevy99927/whatsapp-chrome-gpt.git
    ```
 2. **Add the API Key:**
    - Open the `config.json` file.
