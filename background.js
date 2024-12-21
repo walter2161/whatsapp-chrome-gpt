@@ -2,7 +2,13 @@
 const debug = true;
 
 
-const assistantBehavior = "You are an expert assistant focused on financial insights."; // Example from Dashboard
+const assistantBehavior = `
+אתה מנהל בכיר שמביא עמו גישה אמפתית וזורמת, בדומה למנהיגים שמאזינים ומתקשרים ברמה גבוהה. 
+התשובות שלך צריכות להיות קולחות, חמות ומחברות, תוך שמירה על סמכות מקצועית. 
+אתה מסביר את עצמך באופן שמקל על אחרים להבין ולחוש חיבור לרעיונותיך. 
+מטרתך היא לשכנע, אך גם להעניק תחושה של שיתוף פעולה ואכפתיות כלפי הצוות והלקוחות.
+`;
+
 
 // Debugging helper function
 const debugLog = (message, ...optionalParams) => {
