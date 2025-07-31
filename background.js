@@ -1,14 +1,12 @@
 // Enable or disable debugging
 const debug = true;
 
-
 const assistantBehavior = `
-אתה מנהל בכיר שמביא עמו גישה אמפתית וזורמת, בדומה למנהיגים שמאזינים ומתקשרים ברמה גבוהה. 
-התשובות שלך צריכות להיות קולחות, חמות ומחברות, תוך שמירה על סמכות מקצועית. 
-אתה מסביר את עצמך באופן שמקל על אחרים להבין ולחוש חיבור לרעיונותיך. 
-מטרתך היא לשכנע, אך גם להעניק תחושה של שיתוף פעולה ואכפתיות כלפי הצוות והלקוחות.
+Você é um gerente sênior que traz uma abordagem empática e fluida, semelhante a líderes que ouvem e se comunicam em um nível elevado.
+Suas respostas devem ser persuasivas, calorosas e conectivas, mantendo a autoridade profissional.
+Você explica de uma maneira que facilita aos outros entender e se conectar com suas ideias.
+Seu objetivo é persuadir, mas também dar uma sensação de colaboração e cuidado para com a equipe e os clientes.
 `;
-
 
 // Debugging helper function
 const debugLog = (message, ...optionalParams) => {
@@ -16,12 +14,6 @@ const debugLog = (message, ...optionalParams) => {
     console.log(message, ...optionalParams);
   }
 };
-fetch(chrome.runtime.getURL('config.json'))
-    .then(response => response.json())
-    .then(config => {
-        const preferredLanguage = config.PREFERRED_LANGUAGE || "en"; 
-        const prompt = `Please respond in ${preferredLanguage}: ${message}`;
-    });
 
 // Load the config.json file
 fetch(chrome.runtime.getURL('config.json'))
@@ -30,41 +22,38 @@ fetch(chrome.runtime.getURL('config.json'))
     return response.json();
   })
   .then(config => {
-    const apiKey = config.OPENAI_API_KEY;
-
+    const apiKey = config.MISTRAL_API_KEY;
     if (!apiKey) {
       console.error('API Key is missing');
       return;
     }
 
-    // Function to send a message to ChatGPT
-    const sendMessageToChatGPT = (message, apiKey) => {
-      debugLog('Preparing to send message to ChatGPT:', message);
-      return fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-              //model: "gpt-3.5-turbo",
-              model: "gpt-4-turbo",
-              temperature: 0.7,
-              messages: [
-                { role: "system", content: assistantBehavior },
-                { role: "user", content: message }
-            ]
-          })
+    // Function to send a message to Mistral AI
+    const sendMessageToMistralAI = (message, apiKey) => {
+      debugLog('Preparing to send message to Mistral AI:', message);
+      return fetch('https://api.mistral.ai/v1/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "mistral-tiny", // or another model available in Mistral AI
+          messages: [
+            { role: "system", content: assistantBehavior },
+            { role: "user", content: message }
+          ]
+        })
       })
-          .then(response => {
-              debugLog('Received response from OpenAI:', response);
-              if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-              return response.json();
-          })
-          .catch(error => {
-              debugLog('Error during API request:', error);
-              throw error; // Ensure the error propagates
-          });
+      .then(response => {
+        debugLog('Received response from Mistral AI:', response);
+        if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+        return response.json();
+      })
+      .catch(error => {
+        debugLog('Error during API request:', error);
+        throw error; // Ensure the error propagates
+      });
     };
 
     // Listen for messages from content.js
@@ -72,22 +61,20 @@ fetch(chrome.runtime.getURL('config.json'))
       try {
         if (request.action === 'sendToChatGPT') {
           const message = request.message;
-
           debugLog('Received message from content.js:', message);
-          sendMessageToChatGPT(message, apiKey)
-              .then(data => {
-                  debugLog('Data from OpenAI:', data);
-                  if (data.choices && data.choices[0] && data.choices[0].message) {
-                      sendResponse({ success: true, reply: data.choices[0].message.content });
-                  } else {
-                      sendResponse({ success: false, error: 'No valid response from API' });
-                  }
-              })
-              .catch(error => {
-                  console.error('Error contacting OpenAI:', error);
-                  sendResponse({ success: false, error: error.message });
-              });
-
+          sendMessageToMistralAI(message, apiKey)
+            .then(data => {
+              debugLog('Data from Mistral AI:', data);
+              if (data.choices && data.choices[0] && data.choices[0].message) {
+                sendResponse({ success: true, reply: data.choices[0].message.content });
+              } else {
+                sendResponse({ success: false, error: 'No valid response from API' });
+              }
+            })
+            .catch(error => {
+              console.error('Error contacting Mistral AI:', error);
+              sendResponse({ success: false, error: error.message });
+            });
           return true; // Keep the message channel open for async response
         }
       } catch (error) {
